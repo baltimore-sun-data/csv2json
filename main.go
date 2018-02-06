@@ -39,6 +39,7 @@ func FromArgs(args []string) (*Encoder, error) {
 
 	src := fl.String("src", "", "Source file (default: stdin)")
 	dest := fl.String("dest", "", "Destination file (default: stdout)")
+	array := fl.Bool("no-headers", false, "Return each row as an array")
 	_ = fl.Parse(args)
 
 	e := Encoder{
@@ -59,7 +60,12 @@ func FromArgs(args []string) (*Encoder, error) {
 		}
 		e.dest = f
 	}
-	e.transformer = e.WithHeaders
+
+	if *array {
+		e.transformer = e.NoHeaders
+	} else {
+		e.transformer = e.WithHeaders
+	}
 	return &e, nil
 }
 
@@ -111,4 +117,27 @@ func makeWithHeader(src io.ReadCloser) (data []map[string]string, err error) {
 		}
 		data = append(data, datum)
 	}
+}
+
+func (e *Encoder) NoHeaders() (err error) {
+	defer deferClose(&err, e.dest.Close)
+
+	data, err := makeWithoutHeader(e.src)
+	if err != nil {
+		return err
+	}
+
+	enc := json.NewEncoder(e.dest)
+	return enc.Encode(&data)
+}
+
+func makeWithoutHeader(src io.ReadCloser) (data [][]string, err error) {
+	defer deferClose(&err, src.Close)
+
+	cr := csv.NewReader(src)
+	cr.Comment = '#'
+	cr.FieldsPerRecord = -1
+	cr.ReuseRecord = true
+
+	return cr.ReadAll()
 }
