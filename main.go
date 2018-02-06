@@ -137,7 +137,6 @@ func makeWithoutHeader(src io.ReadCloser) (data [][]string, err error) {
 	cr := csv.NewReader(src)
 	cr.Comment = '#'
 	cr.FieldsPerRecord = -1
-	cr.ReuseRecord = true
 
 	return cr.ReadAll()
 }
