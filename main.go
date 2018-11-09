@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/carlmjohnson/flagext"
 )
 
 func main() {
@@ -37,21 +39,15 @@ type Encoder struct {
 func FromArgs(args []string) (*Encoder, error) {
 	fl := flag.NewFlagSet("csv2json", flag.ExitOnError)
 
-	src := fl.String("src", "", "Source file (default: stdin)")
+	src := flagext.FileOrURL(flagext.StdIO, nil)
+	fl.Var(src, "src", "Source `path` for file or URL")
 	dest := fl.String("dest", "", "Destination file (default: stdout)")
 	array := fl.Bool("no-headers", false, "Return each row as an array")
 	_ = fl.Parse(args)
 
 	e := Encoder{
-		src:  os.Stdin,
+		src:  src,
 		dest: os.Stdout,
-	}
-	if *src != "" && *src != "-" {
-		f, err := os.Open(*src)
-		if err != nil {
-			return nil, err
-		}
-		e.src = f
 	}
 	if *dest != "" && *dest != "-" {
 		f, err := os.Create(*dest)
