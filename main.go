@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/carlmjohnson/errors"
 	"github.com/carlmjohnson/flagext"
 )
 
@@ -20,13 +21,6 @@ func main() {
 	if err = enc.Encode(); err != nil {
 		fmt.Fprintf(os.Stderr, "Run time error: %v\n", err)
 		os.Exit(1)
-	}
-}
-
-func deferClose(err *error, f func() error) {
-	newErr := f()
-	if *err == nil {
-		*err = newErr
 	}
 }
 
@@ -70,7 +64,7 @@ func (e *Encoder) Encode() error {
 }
 
 func (e *Encoder) WithHeaders() (err error) {
-	defer deferClose(&err, e.dest.Close)
+	defer errors.Defer(&err, e.dest.Close)
 
 	data, err := makeWithHeader(e.src)
 	if err != nil {
@@ -82,7 +76,7 @@ func (e *Encoder) WithHeaders() (err error) {
 }
 
 func makeWithHeader(src io.ReadCloser) (data []map[string]string, err error) {
-	defer deferClose(&err, src.Close)
+	defer errors.Defer(&err, src.Close)
 
 	cr := csv.NewReader(src)
 	cr.Comment = '#'
@@ -116,7 +110,7 @@ func makeWithHeader(src io.ReadCloser) (data []map[string]string, err error) {
 }
 
 func (e *Encoder) NoHeaders() (err error) {
-	defer deferClose(&err, e.dest.Close)
+	defer errors.Defer(&err, e.dest.Close)
 
 	data, err := makeWithoutHeader(e.src)
 	if err != nil {
@@ -128,7 +122,7 @@ func (e *Encoder) NoHeaders() (err error) {
 }
 
 func makeWithoutHeader(src io.ReadCloser) (data [][]string, err error) {
-	defer deferClose(&err, src.Close)
+	defer errors.Defer(&err, src.Close)
 
 	cr := csv.NewReader(src)
 	cr.Comment = '#'

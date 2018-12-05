@@ -1,4 +1,4 @@
-github.com/carlmjohnson/flagext v0.0.1 h1:5r8xdcALgCXC/aMpRhELvUszuFi4laZzA6GvVq3GfMA=
-github.com/carlmjohnson/flagext v0.0.1/go.mod h1:dg/yd3ze75o3frOmgsPvEG3UnH0pEzdAOx62p6TTuYc=
+github.com/carlmjohnson/errors v0.0.1 h1:n1as40WhEv/PqwY/cbzhpjcal8rHXfQP7LZrT2g4PBY=
+github.com/carlmjohnson/errors v0.0.1/go.mod h1:UYcgVkDrp62DKybBUnX993mCAIkw+5OCmq9Msg1RiSM=
 github.com/carlmjohnson/flagext v0.0.2 h1:EUoxv3mF0BAk5n+gJJ5inYdA7Isecsj0Q5Y8NLcBEcg=
 github.com/carlmjohnson/flagext v0.0.2/go.mod h1:dg/yd3ze75o3frOmgsPvEG3UnH0pEzdAOx62p6TTuYc=
